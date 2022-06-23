@@ -22,8 +22,7 @@ public class UserRepositoryImpl {
     @Autowired
     private AuditableRepository auditableRepository;
 
-    public CompletableFuture<String> saveData(int id, String name, String dept, String designation) {
-        log.debug("Inside UserRepositoryImpl.saveData with : " + id + " " + name + " " + dept + " " + designation);
+    public CompletableFuture<String> saveEmployee(int id, String name, String dept, String designation) {
         try {
             UserData user = new UserData();
             Employee employee = new Employee();
@@ -32,6 +31,8 @@ public class UserRepositoryImpl {
             user.setUserId(id);
             employee.setEmpId(name);
             employee.setEmpName(name);
+            employee.setEmpDept(dept);
+            employee.setEmpDesignation(designation);
             auditTable.setCreatedBy(name);
             auditTable.setCreatedDate(Date.from(Instant.now()));
             auditTable.setLastModifiedBy(null);
@@ -39,23 +40,26 @@ public class UserRepositoryImpl {
             userRepository.save(user);
             employeeRepository.save(employee);
             auditableRepository.save(auditTable);
+            log.info("Employee saved with id: " + id);
             return CompletableFuture.completedFuture("Save Successful");
         } catch (Exception e) {
+            log.error("Could not save employee with id: " + id);
             e.printStackTrace();
         }
         return CompletableFuture.completedFuture("Save Unsuccessful");
     }
 
-    public CompletableFuture<Response> getData(int id) {
-        log.debug("Inside UserRepositoryImpl.getData with : " + id);
+    public CompletableFuture<Response> getEmployee(int id) {
         try{
             UserData user = null;
             Employee employee = null;
             user = userRepository.findOneById(id);
             employee = employeeRepository.findOnById(id);
             Response response = new Response(user, employee);
+            log.info("Fetched employee with id: " + id);
             return CompletableFuture.completedFuture(response);
         }catch (Exception e){
+            log.error("Could not get employee with id: " + id);
             e.printStackTrace();
         }
         return CompletableFuture.completedFuture(null);

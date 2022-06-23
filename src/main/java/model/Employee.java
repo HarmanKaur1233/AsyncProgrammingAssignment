@@ -10,11 +10,13 @@ import javax.persistence.Table;
 
 @NoArgsConstructor
 @Entity
-@Table(name = "project")
+@Table(name = "employee")
 @Getter
 @Setter
 public class Employee {
     @Id
     String empId;
     String empName;
+    String empDept;
+    String empDesignation;
 }
